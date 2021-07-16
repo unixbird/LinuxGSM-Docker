@@ -77,6 +77,23 @@ apt install -y \
 apt-get clean; \
 rm -rf /var/lib/apt/lists/*
 
+#Install steamcmd
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+RUN echo steam steam/question select "I AGREE" | debconf-set-selections \
+    && echo steam steam/license note '' | debconf-set-selections \
+    && dpkg --add-architecture i386 \
+    && apt-get update -y \
+    && apt-get install -y --no-install-recommends steamcmd \
+    # Cleanup
+    && apt-get -y autoremove \
+    && apt-get -y clean \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /tmp/* \
+    && rm -rf /var/tmp/* \
+    # Final setup
+    && ln -s /usr/games/steamcmd /usr/bin/steamcmd \
+    && steamcmd +quit
+
 ## linuxgsm.sh
 RUN set -ex; \
 wget https://linuxgsm.com/dl/linuxgsm.sh
